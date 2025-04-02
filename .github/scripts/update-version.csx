@@ -41,8 +41,16 @@ if (Args.Count() < 4)
 var local = true;
 
 string githubOwner = Args[0];
+Console.WriteLine($"githubOwner: {githubOwner}");
+
 string packageName = Args[1];
+Console.WriteLine($"packageName: {packageName}");
+
 string githubToken = Args[2];
+if (githubToken != null)
+    Console.WriteLine($"githubToken: <<supplied ok>>");
+else
+    Console.WriteLine($"githubToken: <<not ok>>");
 
 var projectFilePath = "";
 if (Args != null)
@@ -76,6 +84,8 @@ if (Args != null)
         update = Update.Coverage;
 }
 
+Console.WriteLine($"update: {update}");
+
 var version = await GetLatestVersionOrDefaultAsync($"https://api.github.com/users/{githubOwner}/packages/nuget/{packageName}/versions", githubToken);
 SetVersion(projectFilePath, UpdateVersion(version, update));
 
@@ -92,6 +102,7 @@ async Task<string> GetLatestVersionOrDefaultAsync(string apiUrl, string githubTo
         response.EnsureSuccessStatusCode();
 
         string json = await response.Content.ReadAsStringAsync();
+        Console.WriteLine($"json: {json}");
 
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var packages = JsonSerializer.Deserialize<Package[]>(json, options).ToList();
@@ -141,7 +152,7 @@ static void SetVersion(string filepath, string newVersion)
 static string UpdateVersion(string version, Update update)
 {
     Console.WriteLine($"update type: {update}");
-    var parts = version.Split('.').Select(x => int.Parse(x)).ToList();
+    var parts = version.Split(new char[] { '.', '-' }).Where(x => int.TryParse(x, out _)).Select(x => int.Parse(x)).Take(3).ToList();
 
     switch (update)
     {
