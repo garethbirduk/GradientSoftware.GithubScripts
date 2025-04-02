@@ -66,17 +66,13 @@ if (Args != null)
 
     if (name.Contains("__breaking", StringComparison.OrdinalIgnoreCase))
         update = Update.Major;
-
-    if (name.Contains("__feature", StringComparison.OrdinalIgnoreCase))
+    else if (name.Contains("__feature", StringComparison.OrdinalIgnoreCase))
         update = Update.Minor;
-
-    if (name.Contains("__bug", StringComparison.OrdinalIgnoreCase))
+    else if (name.Contains("__bug", StringComparison.OrdinalIgnoreCase))
         update = Update.Patch;
-
-    if (name.Contains("__nosource", StringComparison.OrdinalIgnoreCase))
+    else if (name.Contains("__nosource", StringComparison.OrdinalIgnoreCase))
         update = Update.None;
-
-    if (name.Contains("__coverage", StringComparison.OrdinalIgnoreCase))
+    else if (name.Contains("__coverage", StringComparison.OrdinalIgnoreCase))
         update = Update.Coverage;
 }
 
